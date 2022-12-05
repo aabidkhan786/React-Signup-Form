@@ -15,6 +15,14 @@ function App() {
       password: '',
       confirmPassword:'',
     }
+
+    // ====Default Data for Edit Mode=========
+    // defaultValues:{
+    //   fullName: 'John Doe',
+    //   email: 'John.doe@icloud.com',
+    //   password: 'John#DOE7964',
+    //   confirmPassword:'John#DOE7964',
+    // }
   });
 
   const [isConfirmPassword, setIsConfirmPassword] = useState(false);
