@@ -199,7 +199,7 @@ function App() {
                   onChange={selected => {
                     onChange(selected?.value || []);
                   }}
-                  isClearable={false}
+                  isClearable
                 />
               )}
             />
