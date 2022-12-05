@@ -8,7 +8,14 @@ function App() {
     register,
     getValues,
     formState: { errors, isDirty },
-  } = useForm();
+  } = useForm({
+    defaultValues:{
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword:'',
+    }
+  });
 
   const [isConfirmPassword, setIsConfirmPassword] = useState(false);
 
