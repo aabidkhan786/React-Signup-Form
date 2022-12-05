@@ -1,106 +1,215 @@
-import './App.css';
-import {useState} from 'react';
-
+import "./App.css";
+import { useForm, Controller } from "react-hook-form";
+import { useEffect, useState } from "react";
+import Select from "react-select";
 
 function App() {
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  }
+  const {
+    handleSubmit,
+    register,
+    getValues,
+    control,
+    formState: { errors, isDirty, dirtyFields },
+  } = useForm({
+    defaultValues: {
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      country: [],
+    },
 
-  const [name, setName] = useState("");
-  const [validName, setValidName] = useState("");
+    // ====Default Data for Edit Mode=========
+    // defaultValues:{
+    //   fullName: 'John Doe',
+    //   email: 'John.doe@icloud.com',
+    //   password: 'John#DOE7964',
+    //   confirmPassword:'John#DOE7964',
+    // }
+  });
 
-  const nameChange = (e) => {
-    setName(e.target.value);
+  const options = [
+    { value: "Syria", label: "Syria" },
+    { value: "India", label: "India" },
+    { value: "United Kingdom", label: "UK" },
+    { value: "United States of America", label: "USA" },
+  ];
 
-    let regName = /^[a-zA-Z ]*$/;
-    let nameClassUpdate = document.getElementById('nameHelp');
-    if ((name.length) < 1){
-      setValidName("Please enter your name.")
-      nameClassUpdate.classList = "form-text text-danger";
-    }
-    else if ((name.length) < 2){
-      setValidName("❌ Your full name must be greater than 3 character.  ")
-      nameClassUpdate.classList = "form-text text-danger";
-    }
-    else if ((name.length) > 2){
-      if(regName.test(name) === false){
-        setValidName("❌ Your full name must not contain digit or special characters.");
-        nameClassUpdate.classList = "form-text text-danger";
-      }
-      else if (regName.test(name) === true && (name.length) > 2) {
-        setValidName("😊 Now It's Perfect.");
-        nameClassUpdate.classList = "form-text text-success";
-      }
-    }
-  }
+  const [isConfirmPassword, setIsConfirmPassword] = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [validemail, setValidEmail] = useState("");
+  const onSubmit = (data) => {
+    console.log(data);
+  };
 
-  const emailChange = (e) => {
-    setEmail(e.target.value);
+  useEffect(() => {
+    console.log({ errors });
+    console.log({ isDirty });
+    console.log({ dirtyFields });
+    console.log(getValues());
+  });
 
-    let regemail = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-    if ((email.length) < 5){
-      setValidEmail("❌ Your email must be greater than 3 character.  ")
-    }
-    else if ((email.length) > 5){
-      if(regemail.test(email) === false){
-        setValidEmail("❌ Your full email must contain @ and .com or .in");
-      }
-      else if (regemail.test(email) === true && (email.length) > 5) {
-        setValidEmail("😊 Now It's Perfect.");
-      }
-    }
-  }
-
-  const [password, setPassword] = useState("");
-  const [validPassword, setValidPassword] = useState("");
-
-  const passwordChange = (e) => {
-    setPassword(e.target.value);
-
-    let regpassword = /^[a-zA-Z0-9!@#$%^&*]{6,16}$/;
-    if ((password.length) < 6 || (password.length) > 12){
-      setValidPassword("❌ Your password must not be less than 6 character and more than 12 character.")
-    }
-    else if ((password.length) > 6 && (password.length) < 12){
-      if(regpassword.test(password) === false){
-        setValidPassword("❌ Your password must contain a smallcase, uppercase, special character & digit.");
-      }
-      else if (regpassword.test(password) === true && ((password.length) > 6) && (password.length < 12)) {
-        setValidPassword("😊 Now It's Perfect.");
-      }
-    }
-  }
   return (
     <div className="container d-flex justify-content-center mt-3 shadow-container">
-      <div className='w-50 '><img src={'/Images/astronaut.png'} alt="astronaut" className="img-fluid" /></div>
-      <div className='w-50 p-3'>
-        <form onSubmit={handleSubmit}>
+      <div className="w-50 ">
+        <img
+          src={"/Images/astronaut.png"}
+          alt="astronaut"
+          className="img-fluid"
+        />
+      </div>
+      <div className="w-50 p-3">
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group mt-3">
             <label>👨 Enter Full Name</label>
-            <input type="text" className="form-control" id="fullName" placeholder="Full Name" value={name} onChange={nameChange}/>
-            <small id="nameHelp">{validName}</small>
+            <input
+              type="text"
+              className="form-control"
+              id="fullName"
+              placeholder="Full Name"
+              {...register("fullName", {
+                required: "Email is required.",
+                minLength: {
+                  value: 3,
+                  message: "Minimum 3 letters required.",
+                },
+                pattern: {
+                  value: /^[a-zA-Z][a-zA-Z\. ]*$/gim,
+                  message:
+                    "Digits, special character are not allowed in full name.",
+                },
+              })}
+            />
+            {errors.fullName && (
+              <small id="passwordHelp2" className="form-text text-danger">
+                {errors?.fullName?.message}
+              </small>
+            )}
           </div>
           <div className="form-group mt-3">
             <label htmlFor="exampleInputEmail1">📧 Email address</label>
-            <input type="email" className="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" value={email} onChange={emailChange}/>
-              <small id="emailHelp" className="form-text text-danger">{validemail}</small>
+            <input
+              type="email"
+              className="form-control"
+              id="email"
+              aria-describedby="emailHelp"
+              placeholder="Enter email"
+              {...register("email", {
+                required: "Email is required.",
+                minLength: {
+                  value: 6,
+                  message: "Minimum length of 6 is required.",
+                },
+                pattern: {
+                  value: /^[A-Za-z0-9_!#$%&'*+\/=?`{|}~^.-]+@[A-Za-z0-9.-]+$/gm,
+                  message: "Email is not valid",
+                },
+              })}
+            />
+            {errors.email && (
+              <small id="passwordHelp2" className="form-text text-danger">
+                {errors?.email?.message}
+              </small>
+            )}
           </div>
           <div className="form-group mt-3">
             <label htmlFor="exampleInputPassword1">🔒 Password</label>
-            <input type="password" className="form-control" id="Password1" placeholder="Password" onChange={passwordChange} value={password}/>
-            <small id="passwordHelp1" className="form-text text-danger">{validPassword}</small>
+            <input
+              type="password"
+              className="form-control"
+              id="Password1"
+              placeholder="Password"
+              {...register("password", {
+                required: "Password is required.",
+                minLength: {
+                  value: 5,
+                  message: "Password must of 5 in length.",
+                },
+                maxLength: {
+                  value: 12,
+                  message: "Password must not be more than 12 in length.",
+                },
+                pattern: {
+                  value:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,12}$/,
+                  message:
+                    "Password must contain atleast one uppercase, lowercase, digit & special character.",
+                },
+              })}
+            />
+            {errors.password && (
+              <small id="passwordHelp2" className="form-text text-danger">
+                {errors?.password?.message}
+              </small>
+            )}
           </div>
           <div className="form-group mt-3">
             <label htmlFor="exampleInputPassword2">🔒 Confirm Password</label>
-            <input type="password" className="form-control" id="Password2" placeholder="Confirm Password"/>
-            <small id="passwordHelp2" className="form-text text-danger">Password must be same</small>
+            <input
+              type="password"
+              className="form-control"
+              id="Password2"
+              placeholder="Confirm Password"
+              {...register("confirmPassword", {
+                required: "Confirm password is required.",
+                minLength: {
+                  value: 5,
+                  message: "Confirm Password must of 5 in length.",
+                },
+                maxLength: {
+                  value: 12,
+                  message:
+                    "Confirm Password must not be more than 12 in length.",
+                },
+                pattern: {
+                  value:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,12}$/,
+                  message:
+                    "Password must contain atleast one uppercase, lowercase, digit & special character.",
+                },
+                onChange: () => {
+                  getValues("password") !== getValues("confirmPassword")
+                    ? setIsConfirmPassword(true)
+                    : setIsConfirmPassword(false);
+                },
+              })}
+            />
+            {isConfirmPassword && (
+              <small id="passwordHelp2" className="form-text text-danger">
+                Password doesn't match out.
+                <br />
+              </small>
+            )}
+            {errors.confirmPassword && (
+              <small id="passwordHelp2" className="form-text text-danger">
+                {errors?.confirmPassword?.message}
+              </small>
+            )}
           </div>
-          <button type="submit" className="btn btn-primary mt-3 border border-2 border-dark">✅ Submit Details</button>
+          <div className="form-group mt-3">
+            <label htmlFor="exampleInputPassword1">🌎 Country</label>
+            <Controller
+              control={control}
+              name="country"
+              rules={{ required: true }}
+              render={({ field: { onChange, value } }) => (
+                <Select
+                  value={value?.value}
+                  options={options}
+                  placeholder="Select your country"
+                  onChange={selected => {
+                    onChange(selected?.value || []);
+                  }}
+                  isClearable={false}
+                />
+              )}
+            />
+          </div>
+          <button
+            type="submit"
+            className="btn btn-primary mt-3 border border-2 border-dark"
+          >
+            ✅ Submit Details
+          </button>
         </form>
       </div>
     </div>
