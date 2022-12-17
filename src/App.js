@@ -11,6 +11,7 @@ function App() {
     control,
     formState: { errors, isDirty, dirtyFields },
   } = useForm({
+    mode:'onBlur',
     defaultValues: {
       fullName: "",
       email: "",
@@ -67,7 +68,7 @@ function App() {
               id="fullName"
               placeholder="Full Name"
               {...register("fullName", {
-                required: "Email is required.",
+                required: "Full name is required.",
                 minLength: {
                   value: 3,
                   message: "Minimum 3 letters required.",
